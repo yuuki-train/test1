@@ -7,7 +7,7 @@ class App extends Component {
   constructor(){
     super()
     this.state ={
-      text: '',
+      text: '計算結果の表示',
       left: '',
       right: '',
       total: ''
@@ -20,9 +20,7 @@ class App extends Component {
     fetch(URL, {mode:'cors'})
     .then(res =>res.json())
     .then(json =>{
-      console.log(json)
       this.setState({
-        text: "計算結果の表示：",
         left: json[0]['left'] + ' + ',
         right: json[0]['right'] + ' = ',
         total: json[0]['total']
