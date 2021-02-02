@@ -7,46 +7,52 @@ class App extends Component {
   constructor(){
     super()
     this.state ={
-      text: '計算結果の表示',
       left: '',
       right: '',
-      total: ''
+      total: '',
+      error: ''
     }
-    
+    this.componentDidMount = this.componentDidMount.bind(this);
   }
 
   componentDidMount(){
-    const URL = 'http://localhost:8080/getResult'
-    fetch(URL, {mode:'cors'})
-    .then(res =>res.json())
-    .then(json =>{
-      this.setState({
-        left: json[0]['left'] + ' + ',
-        right: json[0]['right'] + ' = ',
-        total: json[0]['total']
+    this.onclick = function update(){
+      let data = new FormData(document.getElementById('form'));
+      const URL = 'http://localhost:8080/plus'
+      fetch(URL, {method: 'POST',
+                  mode: 'cors',
+                  body: data
+                })
+      .then(res =>res.json())
+      .then(json =>{
+          this.setState({
+            total: json[0]['result'],
+            error: ''
+          })
       })
-    })
+      .catch(error =>{
+        console.error('Error:', error)
+        this.setState({
+          total: '',
+          error: '数字で全ての項目を入力してください'
+        })
+      })
+    }
+    document.getElementById("calculate").addEventListener('click', this.onclick.bind(this) ,false)
   }
-
   
   render(){
-    /*
     return(
       <div className="results">
-        <form action="http://localhost:8080/test" method = "post">
-          <input type="text" name="leftNumber" placeholder="足される数"/>+
-          <input type="text" name="rightNumber" placeholder="足す数"/>=<br />
-          {this.state.text} {this.state.left} {this.state.right} {this.state.total}<br />
-          <button type="submit">計算</button>
+        <form id="form">
+          <input id="leftNumber" type="text" name="leftNumber" placeholder="足される数" defaultValue={this.state.left}/>+
+          <input id="rightNumber" type="text" name="rightNumber" placeholder="足す数" defaultValue={this.state.right}/> = 
+          {this.state.total}<br />
+          <button id="calculate" type="button">計算</button>
+          {this.state.error}
         </form> 
       </div>
     )
-    */
-   return(
-     <div className='App'>
-       {this.state.text} {this.state.left} {this.state.right} {this.state.total}
-     </div>
-   )
   }
 }
 
